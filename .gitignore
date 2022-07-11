@@ -1,0 +1,5 @@
+Lib/
+Scripts/
+cameras/db.sqlite3
+cameras/cameras/__pycache__
+cameras/firstapp/__pycache__

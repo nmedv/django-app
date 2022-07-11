@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cameras</title>
+        <style>
+            .container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: baseline;
+            }
+            .cam_container {
+                display: flex;
+                flex-direction: column;
+                padding: 2px;
+                width: 300px;
+            }
+            .cam_container_tools {
+                position: absolute;
+                background-color: black;
+                opacity: 0%;
+                width: 300px;
+                height: 40px;
+            }
+            .cam_container_tools:hover {
+                opacity: 20%;
+            }
+            .cam_container_tools_img {
+                height: 30px;
+                margin-top: 5px;
+                margin-right: 5px;
+                filter: saturate(0);
+                filter: brightness(200);
+            }
+            .cam_container_tools_img:hover {
+                opacity: 100%;
+                cursor: pointer;
+            }
+
+            .add_cam_container {
+                opacity: 10%;
+                width: 100px;
+                height: 100px;
+            }
+            .add_cam_container:hover {
+                opacity: 20%;
+            }
+            .add_cam_container_img {
+                width: 100%;
+                object-fit: cover;
+            }
+            .video_stream {
+                height: 300px;
+                object-fit: cover;
+            }
+            .cam_url_select {
+                display: block;
+                width: 100%;
+                background-color: blue;
+                color: white;
+                text-align: center;
+            }
+            .cam_url_select:hover {
+                background-color: blue;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="cam_container">
+                <div class="cam_container_tools">
+                    <img class="cam_container_tools_img" src="https://emojitool.ru/img/twitter/twemoji-14.0/cross-mark-2898.png" align="right">
+                </div>
+                <img class="video_stream" src="{{server}}{{"/video_stream?addr="}}{{cam_urls.0}}">
+                <select class="cam_url_select">
+                    {% for url in cam_urls %}
+                    <option>{{ url }}</option>
+                    {% endfor %}
+                    <option>Добавить...</option>
+                </select>
+            </div>
+            <div class="add_cam_container">
+                <img class="add_cam_container_img" src="https://media.istockphoto.com/vectors/black-plus-sign-positive-symbol-vector-id688550958?k=20&m=688550958&s=170667a&w=0&h=vwmBL25oWU3A26BASebi4wENUZ23pnYz9QKnBiw4EvE=">
+            </div>
+        </div> 
+    </body>
+    <script>
+
+        function activateCameraContainerSelector(cam_container) {
+            let video_stream = cam_container.children[1]
+            let selector = cam_container.children[2]
+            console.log(selector)
+            var timestamp = new Date().getTime();
+            selector.addEventListener( "change", () => { 
+                if (selector.value == "Добавить...") {
+                    var addr = prompt("Введите адрес камеры")
+                    new_option = document.createElement("option")
+                    new_option.innerHTML = addr
+                    for (cam_url_selector of document.getElementsByClassName("cam_url_select")) {
+                        cam_url_selector.insertBefore(new_option, cam_url_selector.lastElementChild)
+                    }
+                    selector.value = addr
+                }
+                video_stream.src = "http://localhost:8000/video_stream?addr=" + selector.value + "&t=" + timestamp 
+            } )
+
+            let del = cam_container.children[0].children[0]
+            del.addEventListener( "click", () => { cam_container.remove() } )
+        }
+
+        for ( cam_container of document.getElementsByClassName("cam_container") ) {
+            activateCameraContainerSelector(cam_container)
+        }
+
+        container = document.getElementsByClassName("container")[0]
+        cam_container_add_button = document.getElementsByClassName("add_cam_container")[0]
+        cam_container_add_button.addEventListener( "click", () => {
+            if ( !cam_container_add_button.previousElementSibling ) {
+                new_cam_container = document.createElement("div")
+                new_cam_container.className = "cam_container"
+
+                new_cam_container_tools = document.createElement("div")
+                new_cam_container_tools.className = "cam_container_tools_img"
+                new_cam_container_tools.innerHTML = '<img class="cam_container_tools_img" src="https://emojitool.ru/img/twitter/twemoji-14.0/cross-mark-2898.png" align="right">'
+                new_cam_container.append(new_cam_container_tools)
+
+                new_cam_container_video_stream = document.createElement("img")
+                new_cam_container_video_stream.className = "video_stream"
+                new_cam_container.append(new_cam_container_video_stream)
+
+                new_cam_container_selector = document.createElement("select")
+                new_cam_container_selector.className = "cam_url_select"
+                new_cam_container_selector.innerHTML = '<option>Добавить...</option>'
+                new_cam_container.append(new_cam_container_selector)
+
+                container.insertBefore(new_cam_container, cam_container_add_button)
+                new_cam_container = document.getElementsByClassName("cam_container")[0]
+                activateCameraContainerSelector(new_cam_container)
+            }
+            else {
+                new_cam_container = cam_container_add_button.previousElementSibling.cloneNode(true)
+                activateCameraContainerSelector(new_cam_container)
+                container.insertBefore(new_cam_container, cam_container_add_button)
+            }
+        } )
+        
+    </script>
+</html>

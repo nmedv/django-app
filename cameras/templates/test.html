@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cameras</title>
+        <style>
+            .container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: baseline;
+            }
+            .cam_container {
+                display: flex;
+                flex-direction: column;
+                padding: 2px;
+                width: 300px;
+            }
+            .cam_container_tools {
+                position: absolute;
+                background-color: black;
+                opacity: 0%;
+                width: 300px;
+                height: 40px;
+            }
+            .cam_container_tools:hover {
+                opacity: 20%;
+            }
+            .cam_container_tools_img {
+                height: 30px;
+                margin-top: 5px;
+                margin-right: 5px;
+                filter: saturate(0);
+                filter: brightness(200);
+            }
+            .cam_container_tools_img:hover {
+                opacity: 100%;
+                cursor: pointer;
+            }
+
+            .add_cam_container {
+                opacity: 10%;
+                width: 100px;
+                height: 100px;
+            }
+            .add_cam_container:hover {
+                opacity: 20%;
+            }
+            .add_cam_container_img {
+                width: 100%;
+                object-fit: cover;
+            }
+            .video_stream {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .cam_url_select {
+                display: block;
+                width: 100%;
+                background-color: blue;
+                color: white;
+                text-align: center;
+            }
+            .cam_url_select:hover {
+                background-color: blue;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="cam_container">
+                <div class="cam_container_tools">
+                    <img class="cam_container_tools_img" src="https://emojitool.ru/img/twitter/twemoji-14.0/cross-mark-2898.png" align="right">
+                </div>
+                <img class="video_stream" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg">
+                <select class="cam_url_select">
+                    <option>https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg</option>
+                    <option>https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/1200px-Cat_November_2010-1a.jpg</option>
+                    <option>picture.jpeg</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>rtsp://192.168.0.101:8080/h264_pcm.sdp</option>
+                    <option>rtsp://192.168.0.101:8080/h264_ulaw.sdp</option>
+                    <option>http://192.168.0.101:8080</option>
+                    <option>https://192.168.0.101:8080</option>
+                </select>
+            </div>
+            <div class="add_cam_container">
+                <img class="add_cam_container_img" src="https://media.istockphoto.com/vectors/black-plus-sign-positive-symbol-vector-id688550958?k=20&m=688550958&s=170667a&w=0&h=vwmBL25oWU3A26BASebi4wENUZ23pnYz9QKnBiw4EvE=">
+            </div>
+        </div>
+    </body>
+    <script>
+
+        function activateCameraContainerSelector(cam_container) {
+            let video_stream = cam_container.children[1]
+            let selector = cam_container.children[2]
+            selector.addEventListener( "change", () => { video_stream.src = selector.value } )
+
+            let del = cam_container.children[0].children[0]
+            del.addEventListener( "click", () => { cam_container.remove() } )
+        }
+
+        for ( cam_container of document.getElementsByClassName("cam_container") ) {
+            activateCameraContainerSelector(cam_container)
+        }
+
+        container = document.getElementsByClassName("container")[0]
+        cam_container_add_button = document.getElementsByClassName("add_cam_container")[0]
+        cam_container_add_button.addEventListener( "click", () => {
+            new_cam_container = cam_container_add_button.previousElementSibling.cloneNode(true)
+            if ( !new_cam_container ) {
+                new_cam_container = document.createElement("div")
+                new_cam_container.className = "cam_container"
+                new_cam_container.innerHTML = `
+                
+                `
+            }
+            activateCameraContainerSelector(new_cam_container)
+            container.insertBefore(new_cam_container, cam_container_add_button)
+        } )
+
+    </script>
+</html>
